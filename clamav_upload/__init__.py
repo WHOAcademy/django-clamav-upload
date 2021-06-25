@@ -27,7 +27,11 @@ def get_settings():
             'CONTENT_TYPE_CHECK_ENABLED': s.get('CONTENT_TYPE_CHECK_ENABLED', False),
             # LAST_HANDLER is not a user configurable option; we return
             # it with the settings dict simply because it's convenient.
-            'LAST_HANDLER': getattr(settings, 'FILE_UPLOAD_HANDLERS')[-1]
+            'LAST_HANDLER': getattr(settings, 'FILE_UPLOAD_HANDLERS')[-1],
+
+            # ClamD connection configs
+            'CLAMD_TCP_SOCKET': s.get('CLAMD_TCP_SOCKET', 3310),
+            'CLAMD_TCP_ADDR': s.get('CLAMD_TCP_ADDR', '127.0.0.1')
         }
     return s
 

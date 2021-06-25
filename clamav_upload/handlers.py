@@ -9,7 +9,6 @@ except RuntimeError:
 from clamav_upload import get_settings
 from .exceptions import UploadPermissionDenied
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
-from . import conf
 
 logger = logging.getLogger(__name__)
 s = get_settings()
@@ -27,9 +26,9 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
         try:
             # self.cd = pyclamd.ClamdAgnostic()
             logger.critical('DEBUG START!!!')
-            logger.critical(conf.CLAMD_TCP_ADDR)
-            self.cd = pyclamd.ClamdNetworkSocket(conf.CLAMD_TCP_ADDR, conf.CLAMD_TCP_SOCKET)
-            logger.critical(conf.CLAMD_TCP_SOCKET)
+            logger.critical(s.get('CLAMD_TCP_ADDR'))
+            self.cd = pyclamd.ClamdNetworkSocket(s.get('CLAMD_TCP_ADDR'), s.get('CLAMD_TCP_SOCKET'))
+            logger.critical(s.get('CLAMD_TCP_SOCKET'))
             if self.cd.ping():
                 logger.critical('connection [ok]')
                 self.cd.reload()
