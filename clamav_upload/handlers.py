@@ -28,8 +28,8 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
             # self.cd = pyclamd.ClamdAgnostic()
             logger.critical('DEBUG START!!!')
             logger.critical(conf.CLAMD_TCP_ADDR)
+            self.cd = pyclamd.ClamdNetworkSocket(self, conf.CLAMD_TCP_ADDR, conf.CLAMD_TCP_SOCKET)
             logger.critical(conf.CLAMD_TCP_SOCKET)
-            self.cd = pyclamd.ClamdNetworkSocket(conf.CLAMD_TCP_ADDR, conf.CLAMD_TCP_SOCKET)
             if self.cd.ping():
                 logger.critical('connection [ok]')
                 self.cd.reload()
