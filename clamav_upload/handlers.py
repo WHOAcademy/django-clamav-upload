@@ -9,7 +9,7 @@ except RuntimeError:
 from clamav_upload import get_settings
 from .exceptions import UploadPermissionDenied
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
-
+from . import conf
 
 logger = logging.getLogger(__name__)
 s = get_settings()
@@ -25,7 +25,8 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
         if s.get('LAST_HANDLER') == "{0}.{1}".format(__name__, self.__class__.__name__):
             self.is_last_handler = True
         try:
-            self.cd = pyclamd.ClamdAgnostic()
+            # self.cd = pyclamd.ClamdAgnostic()
+            self.cd = pyclamd.ClamdNetworkSocket(conf.CLAMD_TCP_ADDR, conf.CLAMD_TCP_SOCKET)
         except ValueError:
             raise UploadPermissionDenied(self.request, logger.critical, 'Service currently unavailable')
 

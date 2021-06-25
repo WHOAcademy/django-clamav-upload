@@ -1,5 +1,10 @@
 # django-clamav-upload
+
 A virus scanning file upload handler for the Django framework
+
+## Changelog
+
+- Instead of creating the clamav connection object using `pyclamd.ClamdAgnostic()`, updated the code to get the TCP values from the settings and updated the connectio using `pyclamd.ClamdNetworkSocket(self.IP,3310)`
 
 ## Prerequisites
 
@@ -10,7 +15,7 @@ The ``clamav-daemon`` must be running on the local machine.
 Standard python installation:
 
         python setup.py install
-        
+
 ... or install using pip:
 
         pip install django-clamav-upload
@@ -37,10 +42,10 @@ This determines whether the handler will check the content type of the file agai
         )
 
 The check relies on ``python-magic`` to determine the content-type of the uploaded file. To _enable_ a content-type, simply add it:
- 
+
         >>> from clamav_upload.models import *
         >>> a = AllowedContentType(allowed_type = 'video/mpeg').save()
-        
+
 See the [IANA page on media-types](http://www.iana.org/assignments/media-types/media-types.xhtml) for a comprehensive list.
 
 ## Tests
@@ -48,13 +53,13 @@ See the [IANA page on media-types](http://www.iana.org/assignments/media-types/m
 To run the tests, setup a virtualenv with the required packages (see `requirements.txt`) and then cd into the project directory and run `runtests.py`:
 
         ./runtests.py
-        
+
 The test suite has a default logging configuration so if you want to see what the upload handler is doing, tail the logfile:
 
         tail -f /tmp/clamav_upload.log
-        
+
 You should see the following output:
-      
+
         [2015-11-09 08:37:49,935] [THIS IS A TEST] [DEBUG] [clamav_upload.handlers] Starting new file upload, scanning for malicious content
         [2015-11-09 08:37:49,935] [THIS IS A TEST] [DEBUG] [clamav_upload.handlers] Original Filename: tmpsqWNdw
         [2015-11-09 08:37:49,935] [THIS IS A TEST] [DEBUG] [clamav_upload.handlers] Temporary Filepath: /tmp/tmpo_BjOS.upload
@@ -71,16 +76,16 @@ You should see the following output:
         [2015-11-09 08:37:49,950] [THIS IS A TEST] [DEBUG] [clamav_upload.handlers] Content-Type: application/octet-stream
         [2015-11-09 08:37:49,953] [THIS IS A TEST] [WARNING] [clamav_upload.handlers] Malicious content detected in stream, skipping
 
-The test runner attempts to upload three types of files: one "clean", one "infected", and one clean but unacceptable filetype. 
+The test runner attempts to upload three types of files: one "clean", one "infected", and one clean but unacceptable filetype.
 
 ## Error handling
 
 The upload handler will trigger a 403 if any of the following conditions are met:
 
- * Attempted upload of a file that is an unacceptable mimetype
- * Attempted upload of a file that contains malicious content as detected by ClamAV
- * An exception will be raised if the handler is unable to communicate with ClamAV (clamd)
- 
+- Attempted upload of a file that is an unacceptable mimetype
+- Attempted upload of a file that contains malicious content as detected by ClamAV
+- An exception will be raised if the handler is unable to communicate with ClamAV (clamd)
+
 The resulting errors can be retrieved via the messages framework (``django.contrib.messages``) by using a 403 handler.
 Here's an example that returns the error as a JSON response:
 
@@ -95,10 +100,7 @@ Here's an example that returns the error as a JSON response:
             response_data['error'] += [str(message)]
         return HttpResponse(
             json.dumps(response_data), content_type='application/json', status=403)
-            
-
 
 ## To-do
 
-* Create a ``MemoryFileUploadHandler`` version
-
+- Create a ``MemoryFileUploadHandler`` version
