@@ -26,7 +26,12 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
             self.is_last_handler = True
         try:
             # self.cd = pyclamd.ClamdAgnostic()
+            print("DEBUG START!!!")
+            print(conf.CLAMD_TCP_ADDR)
+            print(conf.CLAMD_TCP_SOCKET)
+            print("DEBUG END!!!")
             self.cd = pyclamd.ClamdNetworkSocket(conf.CLAMD_TCP_ADDR, conf.CLAMD_TCP_SOCKET)
+            print("!!!DEBUG START!!!")
         except ValueError:
             raise UploadPermissionDenied(self.request, logger.critical, 'Service currently unavailable')
 
