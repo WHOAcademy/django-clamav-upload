@@ -7,7 +7,7 @@ except RuntimeError:
     # ``django-admin`` interface. The end result is that content-type checking is disabled.
     pass
 from clamav_upload import get_settings
-from .exceptions import 
+from .exceptions import UploadPermissionDenied
 from django.core.exceptions import PermissionDenied
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 
