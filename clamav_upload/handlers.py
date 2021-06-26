@@ -8,7 +8,6 @@ except RuntimeError:
     pass
 from clamav_upload import get_settings
 from .exceptions import UploadPermissionDenied
-from django.core.exceptions import PermissionDenied
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 
 logger = logging.getLogger(__name__)
@@ -36,7 +35,7 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
             else:
                 logger.error('ping error,exit')
         except ValueError:
-            raise PermissionDenied(self.request, logger.critical, 'Service currently unavailable')
+            raise UploadPermissionDenied(self.request, logger.critical, 'Service currently unavailable')
 
     def new_file(self, file_name, *args, **kwargs):
         super(ClamAVFileUploadHandler, self).new_file(file_name, *args, **kwargs)
@@ -50,13 +49,13 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
             try:
                 content_type = magic.from_buffer(upload_buffer, mime=True)
                 if content_type is None:
-                    raise PermissionDenied(
+                    raise UploadPermissionDenied(
                         self.request, logger.critical, 'Unable to determine content-type, upload denied!')
                 AllowedContentType.objects.get(allowed_type=content_type)
                 self.content_type_already_checked = True
                 logger.debug('Content-Type: "{0}"'.format(content_type))
             except AllowedContentType.DoesNotExist:
-                    raise PermissionDenied(
+                    raise UploadPermissionDenied(
                         self.request, logger.critical, 'Content-Type: {0} is not an accepted type'.format(content_type))
 
     def receive_data_chunk(self, raw_data, start):
@@ -68,10 +67,10 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
                 else:
                     return raw_data
             else:
-                raise PermissionDenied(
+                raise UploadPermissionDenied(
                     self.request, logger.critical, 'Malicious content detected in stream, upload denied!')
         except pyclamd.ConnectionError as e:
-            raise PermissionDenied(self.request, logger.critical, e.message)
+            raise UploadPermissionDenied(self.request, logger.critical, e.message)
 
     def file_complete(self, file_size):
         logger.info('File upload: "{0}" complete!'.format(self.file.name))
