@@ -1,14 +1,16 @@
 import pyclamd, tempfile
 from django.test import TestCase, Client
+from clamav_upload import get_settings
 from clamav_upload.models import AllowedContentType
 
 class AllowedContentTypeTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.cd = pyclamd.ClamdAgnostic()
+        s = get_settings()
+        self.cd = pyclamd.ClamdNetworkSocket(s['CLAMD_TCP_ADDR'], s['CLAMD_TCP_SOCKET'])
         self.no_eicar = tempfile.NamedTemporaryFile()
-        self.no_eicar.write('no virus in this file')
+        self.no_eicar.write(b'no virus in this file')
         self.no_eicar.flush()
         self.no_eicar.seek(0)
         self.eicar = tempfile.NamedTemporaryFile()
@@ -22,10 +24,9 @@ class AllowedContentTypeTestCase(TestCase):
     def tearDown(self):
         self.eicar.close()
         self.no_eicar.close()
-        try:
+        # test_disallowed_content_types already deletes it.
+        if self.allowed_type.pk is not None:
             self.allowed_type.delete()
-        except AssertionError:
-            pass
 
     def test_eicar(self):
         eicar = self.cd.scan_stream(self.eicar.read())
