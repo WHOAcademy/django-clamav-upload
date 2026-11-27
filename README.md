@@ -4,12 +4,12 @@ A virus scanning file upload handler for the Django framework
 
 ## Changelog
 
-- 0.1.3: Support Django 4.2 to 5.2 on Python 3. Added the missing `AllowedContentType` migration, declared `python-magic` as a dependency, and replaced Python 2 / pre-Django 4 APIs.
+- 0.1.3: Support Django 5.2.18 on Python 3. Added the missing `AllowedContentType` migration, declared `python-magic` as a dependency, and replaced Python 2 / pre-Django 4 APIs.
 - Instead of creating the clamav connection object using `pyclamd.ClamdAgnostic()`, updated the code to get the TCP values from the settings and updated the connectio using `pyclamd.ClamdNetworkSocket(self.IP,3310)`
 
 ## Prerequisites
 
-- Python 3.8+ and Django 4.2 to 5.2
+- Python 3.10+ and Django 5.2.18
 - A reachable ``clamav-daemon`` (``clamd``); configure its address with ``CLAMD_TCP_ADDR`` / ``CLAMD_TCP_SOCKET``
 - ``libmagic`` (used by ``python-magic`` for content-type checks)
 
