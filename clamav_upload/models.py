@@ -7,7 +7,7 @@ class AllowedContentType(models.Model):
         verbose_name = 'Content-Type',
         unique = True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.allowed_type
 
     class Meta:

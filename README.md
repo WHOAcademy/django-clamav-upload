@@ -4,11 +4,14 @@ A virus scanning file upload handler for the Django framework
 
 ## Changelog
 
+- 0.1.3: Support Django 5.2.18 on Python 3. Added the missing `AllowedContentType` migration, declared `python-magic` as a dependency, and replaced Python 2 / pre-Django 4 APIs.
 - Instead of creating the clamav connection object using `pyclamd.ClamdAgnostic()`, updated the code to get the TCP values from the settings and updated the connectio using `pyclamd.ClamdNetworkSocket(self.IP,3310)`
 
 ## Prerequisites
 
-The ``clamav-daemon`` must be running on the local machine.
+- Python 3.10+ and Django 5.2.18
+- A reachable ``clamav-daemon`` (``clamd``); configure its address with ``CLAMD_TCP_ADDR`` / ``CLAMD_TCP_SOCKET``
+- ``libmagic`` (used by ``python-magic`` for content-type checks)
 
 ## Installation
 
@@ -41,6 +44,8 @@ This determines whether the handler will check the content type of the file agai
             'clamav_upload',
         )
 
+Then run ``python manage.py migrate clamav_upload`` to create the table.
+
 The check relies on ``python-magic`` to determine the content-type of the uploaded file. To _enable_ a content-type, simply add it:
 
         >>> from clamav_upload.models import *
@@ -50,9 +55,9 @@ See the [IANA page on media-types](http://www.iana.org/assignments/media-types/m
 
 ## Tests
 
-To run the tests, setup a virtualenv with the required packages (see `requirements.txt`) and then cd into the project directory and run `runtests.py`:
+To run the tests, setup a virtualenv with the required packages (see `requirements.txt`), point the suite at a running clamd and run `runtests.py`:
 
-        ./runtests.py
+        CLAMD_TCP_ADDR=127.0.0.1 CLAMD_TCP_SOCKET=3310 ./runtests.py
 
 The test suite has a default logging configuration so if you want to see what the upload handler is doing, tail the logfile:
 

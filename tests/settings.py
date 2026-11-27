@@ -3,21 +3,27 @@ DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'fake-key'
 INSTALLED_APPS = [
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'tests',
-    'clamav_upload'
+    'clamav_upload',
 ]
 ROOT_URLCONF = 'tests.urls'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-)
+]
 
 FILE_UPLOAD_HANDLERS = ( 
     'clamav_upload.handlers.ClamAVFileUploadHandler',
 )
 
-DATABASES = { 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+USE_TZ = True
+
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'test.db.sqlite3'),
@@ -27,7 +33,9 @@ DATABASES = {
 MEDIA_ROOT = os.path.join(BASE_DIR, 'test_uploaded_files_delete_me')
 
 CLAMAV_UPLOAD = {
-    'CONTENT_TYPE_CHECK_ENABLED': True
+    'CONTENT_TYPE_CHECK_ENABLED': True,
+    'CLAMD_TCP_ADDR': os.environ.get('CLAMD_TCP_ADDR', '127.0.0.1'),
+    'CLAMD_TCP_SOCKET': int(os.environ.get('CLAMD_TCP_SOCKET', 3310)),
 }
 
 LOGGING = {

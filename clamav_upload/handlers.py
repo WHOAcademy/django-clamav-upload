@@ -70,7 +70,7 @@ class ClamAVFileUploadHandler(TemporaryFileUploadHandler):
                 raise UploadPermissionDenied(
                     self.request, logger.critical, 'Malicious content detected in stream, upload denied!')
         except pyclamd.ConnectionError as e:
-            raise UploadPermissionDenied(self.request, logger.critical, e.message)
+            raise UploadPermissionDenied(self.request, logger.critical, str(e))
 
     def file_complete(self, file_size):
         logger.info('File upload: "{0}" complete!'.format(self.file.name))
